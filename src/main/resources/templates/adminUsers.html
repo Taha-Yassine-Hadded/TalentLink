@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Liste Admins</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/line-icons.css">
+    <link rel="stylesheet" href="/css/styleAll.css">
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+    <style>
+
+             section {
+                      margin-top: 4%;
+                      }
+                      div form {
+                      text-align: center;
+                      }
+
+               div form {
+                    text-align: center;
+              }
+              .flex-container {
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  height: 100%;
+            }
+
+            .flex-item {
+                  flex-basis: 33.33%;
+                  text-align: center;
+            }
+
+           .flex-item a {
+                  text-decoration: none;
+                  color: white;
+                  font-weight: bold;
+            }
+
+                .flex-item a:hover {
+                  color: #888;
+            }
+
+    </style>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+    <div class="container">
+        <a class="navbar-brand text-white" href="/">TalentLink</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" style="color: white;" data-bs-toggle="dropdown">
+                        <b><span sec:authentication="name"></span></b>
+                    </a>
+                    <ul class="dropdown-menu" style="margin-left: 1280px;">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/profils/myProfilT}" sec:authorize="hasAuthority('TALENT')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/profils/myProfilE}" sec:authorize="hasAuthority('ENTREPRISE')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/notifications}" sec:authorize="hasAnyAuthority('ENTREPRISE','TALENT')"><span><i class="fa-regular fa-bell" style="color: #005eff;"></i></span><span>&nbsp;Notifications</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/}" sec:authorize="hasAuthority('ADMIN')"><span><i class="fa-solid fa-house" style="color: #005eff;"></i></span><span>&nbsp;Accueil</span></a></li>
+                        <li><a class="dropdown-item" href="/logout"><span><i class="fa-solid fa-right-from-bracket" style="color: #005eff;"></i></span><span>&nbsp;Déconnecter</span></a></li>
+
+
+                    </ul>
+                </li>
+                <li sec:authorize="!isAuthenticated()" class="nav-item">
+                    <a class="nav-link" href="/login"><b>Connexion</b></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<section>
+<div class="container mt-2">
+    <div class="card shadow">
+        <div class="card-header">
+            <tr>
+                <th>
+                    <div class="flex-container">
+                        <div class="flex-item"><a href="/admins/talentsList" class="btn btn-primary ms-1 ">Liste Des Talents</a></div>
+                        <div class="flex-item"><a href="/admins/entreprisesList" class="btn btn-primary ms-1">Liste Des Entreprises</a></div>
+                        <div class="flex-item"><a href="/admins/adminsList" class="btn btn-secondary ms-1">Liste Des Admins</a></div>
+                    </div>
+                </th>
+            </tr>
+
+        </div>
+        <div class="card-body">
+            <form method="get" th:action="${index}">
+                <a href="/admins/addAdmin" class="btn btn-success p-1 m-1">Ajouter</a>
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="username">
+                <button type="submit" class="btn btn-primary p-1 m-1">Chercher</button>
+            </form>
+            <hr>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Nom d'utilisateur</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a:${listAdmins}">
+                    <div th:if="${a.id == 1}">
+                        <td th:text="${a.id}"></td>
+                        <td th:text="${a.nom}"></td>
+                        <td th:text="${a.username}"></td>
+                        <td th:text="${a.email}"></td>
+                        <td sec:authorize="hasAuthority('ADMIN')">
+                            <a th:if="${a.username == user }" class="btn btn-info m-1 p-1 text-white" th:href="@{editAdmin(id=${a.id})}" >
+                                Modifier
+                            </a>
+                        </td>
+                    </div>
+                    <div th:if="!${a.id == 1}">
+                        <td th:text="${a.id}"></td>
+                        <td th:text="${a.nom}"></td>
+                        <td th:text="${a.username}"></td>
+                        <td th:text="${a.email}"></td>
+                        <td sec:authorize="hasAuthority('ADMIN')">
+                            <a class="btn btn-info m-1 p-1 text-white" th:href="@{editAdmin(id=${a.id})}" >
+                                Modifier
+                            </a>
+                            <a th:if="!${a.username == user }" class="btn btn-danger m-1 p-1" th:href="@{deleteAdmin(id=${a.id})}" >
+                                Supprimer
+                            </a>
+                        </td>
+                    </div>
+                </tr>
+                </tbody>
+            </table>
+            <ul class="nav nav-pills">
+                <li th:each="page,status:${pages}">
+                    <a style="padding : 8px;" th:class="${status.index==currentPage?'btn btn-primary ms-1':'btn btn-outline-primary ms-1'}"
+                       th:text="${status.index}"
+                       th:href="@{/admins/adminsList(page=${status.index}, keyword=${keyword})}"
+                    ></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</section>
+</body>
+</html>

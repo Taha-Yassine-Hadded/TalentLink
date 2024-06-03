@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CV Informations</title>
+    <link href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/cvInfo.css}"/>
+    <link rel="stylesheet" href="/css/line-icons.css">
+    <link rel="stylesheet" href="/css/styleOffresFinal.css">
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+    <div class="container">
+        <a class="navbar-brand text-white" href="/">TalentLink</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" style="color: white;" data-bs-toggle="dropdown">
+                        <b><span sec:authentication="name"></span></b>
+                    </a>
+                    <ul class="dropdown-menu" style="margin-left: 1280px;">
+                        <li><a class="dropdown-item" th:href="@{/}" ><span><i class="fa-solid fa-house" style="color: #005eff;"></i></span><span>&nbsp;Accueil</span></a></li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/profils/myProfilT}" sec:authorize="hasAuthority('TALENT')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/profils/myProfilE}" sec:authorize="hasAuthority('ENTREPRISE')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/notifications}" sec:authorize="hasAnyAuthority('ENTREPRISE','TALENT')"><span><i class="fa-regular fa-bell" style="color: #005eff;"></i></span><span>&nbsp;Notifications</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/admins/talentsList}" sec:authorize="hasAuthority('ADMIN')"><span><i class="fa-solid fa-list-check" style="color: #005eff;"></i></span><span>&nbsp;Gérer</span></a></li>
+                        <li><a class="dropdown-item" href="/logout"><span><i class="fa-solid fa-right-from-bracket" style="color: #005eff;"></i></span><span>&nbsp;Déconnecter</span></a></li>
+
+
+                    </ul>
+                </li>
+                <li sec:authorize="!isAuthenticated()" class="nav-item">
+                    <a class="nav-link" href="/login"><b>Connexion</b></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div  style="margin-left : 660px; margin-top : 85px;">
+    <a class="btn btn-primary m-2" th:href="@{/cv/download(id=${cv.id})}">Télécharger le CV</a>
+</div>
+<div class="main">
+    <div class="top-section">
+        <img th:if="${cv.cvPicture == NULL}" style="border : solid 4px white;" th:src="@{/images/default.png}" class="profile" />
+        <img th:if="!${cv.cvPicture == NULL}" style="border : solid 4px white;" th:src="@{getCvPicture(nomFile=${cv.cvPicture})}" class="profile" />
+        <br/>
+        <p class="p1" style="display: inline-block;"><span  th:text="${cv.talent.prenom}"></span>&nbsp;<span  th:text="${cv.talent.nom}"></span></p>
+        <p class="p2 text-uppercase" th:text="${cv.title}"></p>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="col-div-4">
+        <div class="content-box" style="padding-left: 40px;">
+
+
+            <p class="head">Contact</p>
+            <div th:each="cont : ${cv.contacts}">
+                <p class="p3" th:if="${cont.type.equals('Telephone')}"><i class="fa-solid fa-phone" style="color: #005eff;"></i>&nbsp;&nbsp;<span th:text="${cont.value}"></span></p>
+                <p class="p3" th:if="${cont.type.equals('Email')}"><i class="fa-solid fa-envelope" style="color: #005eff;"></i>&nbsp;&nbsp;<span th:text="${cont.value}"></span></p>
+                <p class="p3" th:if="${cont.type.equals('Localisation')}"><i class="fa-solid fa-location-dot" style="color: #005eff;"></i>&nbsp;&nbsp;<span th:text="${cont.value}"></span></p>
+                <p class="p3" th:if="${cont.type.equals('LinkedIn')}"><i class="fa-brands fa-linkedin" style="color: #005eff;"></i>&nbsp;&nbsp;<span th:text="${cont.value}"></span></p>
+                <p class="p3" th:if="${cont.type.equals('GitHub')}"><i class="fa-brands fa-github" style="color: #005eff;"></i>&nbsp;&nbsp;<span th:text="${cont.value}"></span></p>
+                <p class="p3" th:if="${cont.type.equals('Twitter')}"><i class="fa-brands fa-twitter" style="color: #005eff;"></i>&nbsp;&nbsp;<span th:text="${cont.value}"></span></p>
+            </div>
+
+            <br/>
+            <p class="head"><i class="fa-regular fa-circle-check" style="color: #005eff;"></i>&nbsp; Compétence</p>
+            <ul class="skills" th:each="sk : ${cv.competences}">
+                <li th:if="${sk.niveau.equals('Debutant')}"><span class="text-uppercase" th:text="${sk.nom}"></span>&nbsp;:&nbsp;<span>Débutant</span></li>
+                <li th:if="${sk.niveau.equals('Intermediaire')}"><span class="text-uppercase" th:text="${sk.nom}"></span>&nbsp;:&nbsp;<span>Intermédiaire</span></li>
+                <li th:if="${sk.niveau.equals('Expert')}"><span class="text-uppercase" th:text="${sk.nom}"></span>&nbsp;:&nbsp;<span>Expert</span></li>
+            </ul>
+
+
+
+            <br/>
+            <p class="head"><i class="fa-solid fa-language" style="color: #005eff;"></i>&nbsp; Langue</p>
+            <ul class="skills" th:each="lang : ${cv.langues}">
+                <li><span class="text-uppercase" th:text="${lang.nom}"></span>&nbsp;:&nbsp;<span th:text="${lang.niveau}"></span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="line"></div>
+    <div class="col-div-8">
+        <div class="content-box">
+            <p class="head">Introduction</p>
+            <p class="p3" style="font-size: 16px;" th:text="${cv.introduction}"></p>
+            <br/>
+            <p class="head"><i class="fa-solid fa-briefcase" style="color: #005eff;"></i>&nbsp; EXPÉRIENCE</p>
+
+            <ul class="skills" th:each="exp : ${cv.experiences}">
+                <li th:if="${#dates.format(exp.date_debut, 'yyyy') == #dates.format(exp.date_fin, 'yyyy')}"><span th:text="${exp.poste}"></span>&nbsp;à&nbsp;<span th:text="${exp.nomEntreprise}"></span>&nbsp;en&nbsp;<span th:text="${#dates.format(exp.date_debut, 'yyyy')}"></span></li>
+                <li th:if="${#dates.format(exp.date_debut, 'yyyy') != #dates.format(exp.date_fin, 'yyyy')}"><span th:text="${exp.poste}"></span>&nbsp;à&nbsp;<span th:text="${exp.nomEntreprise}"></span>&nbsp;(&nbsp;<span th:text="${#dates.format(exp.date_debut, 'yyyy')}"></span>&nbsp;-&nbsp;<span th:text="${#dates.format(exp.date_fin, 'yyyy')}"></span>&nbsp;)</li>
+            </ul>
+            <br/>
+
+            <p class="head"><i class="fa-solid fa-graduation-cap" style="color: #005eff;"></i>&nbsp; Formation</p>
+            <ul class="skills" th:each="forma : ${cv.formations}">
+                <li><span th:text="${forma.diplome}"></span>&nbsp;à&nbsp;<span th:text="${forma.emplacement}"></span>&nbsp;(&nbsp;<span th:text="${#dates.format(forma.date_debut, 'yyyy')}"></span>&nbsp;-&nbsp;<span th:text="${#dates.format(forma.date_fin, 'yyyy')}"></span>&nbsp;)</li>
+            </ul>
+            <br/>
+
+
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+</div>
+<br/>
+</body>
+</html>

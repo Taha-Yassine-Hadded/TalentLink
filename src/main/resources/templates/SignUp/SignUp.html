@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>S'inscrire</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/line-icons.css">
+    <link rel="stylesheet" href="/css/navSignUp.css">
+    <link rel="stylesheet" type="text/css" href="/css/register.css">
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+    <div class="container">
+        <a class="navbar-brand text-white" href="/">TalentLink</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" style="color: white;" data-bs-toggle="dropdown">
+                        <b><span sec:authentication="name"></span></b>
+                    </a>
+                    <ul class="dropdown-menu" style="margin-left: 1280px;">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/profils/myProfilT}" sec:authorize="hasAuthority('TALENT')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/profils/myProfilE}" sec:authorize="hasAuthority('ENTREPRISE')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/notifications}" sec:authorize="hasAnyAuthority('ENTREPRISE','TALENT')"><span><i class="fa-regular fa-bell" style="color: #005eff;"></i></span><span>&nbsp;Notifications</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/}" sec:authorize="hasAuthority('ADMIN')"><span><i class="fa-solid fa-house" style="color: #005eff;"></i></span><span>&nbsp;Accueil</span></a></li>
+                        <li><a class="dropdown-item" href="/logout"><span><i class="fa-solid fa-right-from-bracket" style="color: #005eff;"></i></span><span>&nbsp;Déconnecter</span></a></li>
+
+
+                    </ul>
+                </li>
+                <li sec:authorize="!isAuthenticated()" class="nav-item">
+                    <a class="nav-link text-white" href="/login"><b>Connexion</b></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="containerr" style="margin-top : 56.2px;">
+    <div class="forms-container">
+        <div class="signin-signup">
+            <form class="sign-in-form" id="formTalent" th:action="@{/addTalent}" method="post" th:object="${talent}">
+                <h2 class="title" style="margin-right : 15px;margin-top : 90px;">Compte talent</h2>
+                <div class="form-group">
+                    <label for="nomTalent">Nom :</label>
+                    <input type="text" id="nomTalent" class="form-control" th:field="*{nom}" required>
+                    <small class="text-danger" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prenom :</label>
+                    <input type="text" id="prenomTalent" class="form-control" th:field="*{prenom}" required>
+                    <small class="text-danger" th:if="${#fields.hasErrors('prenom')}" th:errors="*{prenom}"></small>
+                </div>
+                <div class="form-group mt-2" style="margin-left : 50px;">
+                    <label class="form-label">Genre : </label>
+                    <div class="form-check form-check-inline ms-2">
+                        <input type="radio" class="form-check-input" th:field="*{genre}" value="Male" required>
+                        <label class="form-check-label">Homme</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" class="form-check-input" th:field="*{genre}" value="Female" required>
+                        <label class="form-check-label">Femme</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nom d'utilisateur :</label>
+                    <input type="text" id="usernameTalent" class="form-control" th:field="*{username}" required>
+                </div>
+                <small class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></small>
+                <small class="text-danger" th:text="${errorTal}" th:if="${errorTal}"></small>
+                <div style="margin-right: 53px;">
+                    <div class="from-group">
+                        <label class="form-label">Date de naissance :</label>
+                        <input type="date" class="form-control" name="dateNaissance" th:field="*{dateNaissance}" required>
+                    </div>
+                </div>
+                <small class="text-danger" role="alert" th:text="${errorDate}" th:if="${errorDate}"></small>
+                <div class="form-group">
+                    <label class="form-label">Email :</label>
+                    <input type="email" id="mailTalent" class="form-control" th:field="*{email}" required>
+                </div>
+                <small class="text-danger" th:text="${errorEmailTal}" th:if="${errorEmailTal}"></small>
+                <div class="form-group">
+                    <label for="password">Mot de passe :</label>
+                    <input type="password" id="password" class="form-control" th:field="*{password}" required>
+                    <small class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+                </div>
+                <button type="submit" class="btn btn-outline-primary mt-2">Créer</button>
+            </form>
+            <form class="sign-up-form" id="formEntreprise" th:action="@{/addEntreprise}" method="post" th:object="${entreprise}">
+                <h2 class="title" style="margin-top : 120px;">Compte entreprise</h2>
+                <div class="form-group">
+                    <label>Nom d'entreprise :</label>
+                    <input type="text" class="form-control" th:field="*{nom}" required>
+                    <small class="text-danger" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Spécialisation :</label>
+                    <input type="text" class="form-control" th:field="*{specialisation}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pays :</label>
+                    <input type="text" class="form-control" th:field="*{pays}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Site Web :</label>
+                    <input type="text" class="form-control" th:field="*{website}">
+                    <small class="text-danger" th:if="${#fields.hasErrors('website')}" th:errors="*{website}"></small>
+                </div>
+                <div class="form-group">
+                    <label>Nom d'utilisateur :</label>
+                    <input type="text"class="form-control" th:field="*{username}" required>
+                </div>
+                <small class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></small>
+                <small class="text-danger" th:text="${errorEntr}" th:if="${errorEntr}"></small>
+                <div class="form-group">
+                    <label class="form-label">Email :</label>
+                    <input type="email" class="form-control" th:field="*{email}" required>
+                </div>
+                <small class="text-danger" th:text="${errorEmailEntr}" th:if="${errorEmailEntr}"></small>
+                <div class="form-group">
+                    <label>Mot de passe :</label>
+                    <input type="password" id="pass" class="form-control" th:field="*{password}" required>
+                    <small class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+                </div>
+                <button type="submit" class="btn btn-outline-primary mt-2">Créer</button>
+            </form>
+        </div>
+    </div>
+    <div class="panels-container">
+        <div class="panel left-panel">
+            <div class="content">
+                <h3>Vous êtes une entreprise ?</h3>
+                <p>Cliquez sur le bouton ci-dessous pour créer un nouveau compte !</p>
+                <button class="btn transparent" style="color : white;" id="sign-up-btn">Entreprise</button>
+            </div>
+            <img src="/images/Profiling_Monochromatic.png" class="image" alt="">
+        </div>
+        <div class="panel right-panel">
+            <div class="content">
+                <h3>Vous êtes un talent ?</h3>
+                <p>Cliquez sur le bouton ci-dessous pour créer un nouveau compte !</p>
+                <button class="btn transparent" style="color : white;" id="sign-in-btn">Talent</button>
+            </div>
+            <img src="/images/im.png" class="image" alt="">
+        </div>
+    </div>
+</div>
+
+<script src="/js/register.js"></script>
+
+</body>
+</html>

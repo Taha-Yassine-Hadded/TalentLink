@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Offre Informations</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/textStyle.css">
+    <link rel="stylesheet" href="/css/styleOffresFinal.css">
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+    <style>
+
+             section {
+                      margin-top: 4%;
+                      }
+                      div form {
+                      text-align: center;
+                      }
+
+               div form {
+                    text-align: center;
+              }
+              .flex-container {
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  height: 100%;
+            }
+
+            .flex-item {
+                  flex-basis: 33.33%;
+                  text-align: center;
+            }
+
+           .flex-item a {
+                  text-decoration: none;
+                  color: white;
+                  font-weight: bold;
+            }
+
+                .flex-item a:hover {
+                  color: #888;
+            }
+
+    </style>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+    <div class="container">
+        <a class="navbar-brand text-white" href="/">TalentLink</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link btn-main btnr text-white" th:href="@{/offres}" style="padding-top : 3px; padding-bottom : 3px; margin-left : 18px; margin-top : 4px;">Offres</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" style="color: white;" data-bs-toggle="dropdown">
+                        <b><span sec:authentication="name"></span></b>
+                    </a>
+                    <ul class="dropdown-menu" style="margin-left: 1280px;">
+                        <li><a class="dropdown-item" th:href="@{/}" ><span><i class="fa-solid fa-house" style="color: #005eff;"></i></span><span>&nbsp;Accueil</span></a></li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/profils/myProfilT}" sec:authorize="hasAuthority('TALENT')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/profils/myProfilE}" sec:authorize="hasAuthority('ENTREPRISE')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/notifications}" sec:authorize="hasAnyAuthority('ENTREPRISE','TALENT')"><span><i class="fa-regular fa-bell" style="color: #005eff;"></i></span><span>&nbsp;Notifications</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/admins/talentsList}" sec:authorize="hasAuthority('ADMIN')"><span><i class="fa-solid fa-list-check" style="color: #005eff;"></i></span><span>&nbsp;Gérer</span></a></li>
+                        <li><a class="dropdown-item" href="/logout"><span><i class="fa-solid fa-right-from-bracket" style="color: #005eff;"></i></span><span>&nbsp;Déconnecter</span></a></li>
+
+
+                    </ul>
+                </li>
+                <li sec:authorize="!isAuthenticated()" class="nav-item">
+                    <a class="nav-link" href="/login"><b>Connexion</b></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="card text-center fs-5 shadow" style="width : 60%; margin-left: 20%; margin-top : 110px;">
+    <div class="card-header bg-primary text-white">
+        <p class="h3"><span><i class="fa-solid fa-briefcase" style="color: #ffffff;"></i></span>&nbsp;&nbsp;<span>Informations sur l'offre de mission </span><span th:text="${offre.titre}"></span></p>
+    </div>
+    <div class="card-body">
+        <p class="card-text" th:if="!${username.equals(offre.entreprise.username)}"><b class="text-primary">Publié par : </b><span th:text="${offre.entreprise.nom}"></span><span><a class="btn btn-outline-primary ms-3" th:href="@{/profils/entrepriseProfil(id=${offre.entreprise.id})}" >Voir Le profil</a></span></p>
+        <p class="card-text" th:if="${username.equals(offre.entreprise.username)}"><b class="text-primary">Publié par vous</b><span><a class="btn btn-outline-primary ms-3" th:href="@{/profils/myProfilE}" >Voir votre profil</a></span></p>
+
+        <p class="card-text"><b class="text-primary">Date de publication : </b><span th:text="${#dates.format(offre.date, 'dd-MM-yyyy')}"></span></p>
+        <b class="card-text text-primary">Les compétences requises :&nbsp;&nbsp;</b>
+        <div th:each="comp:${offre.competences}" style="display: inline-block; margin-bottom : 10px;">
+            <span class="text-uppercase" style="border-left : 3px solid #0d6efd; background : #ececec; padding-left : 6px; padding-right : 6px; margin-right : 8px;" th:text="${comp.nom}"></span>
+        </div>
+        <br>
+        <p class="card-text"><b class="text-primary">Nombre des candidatures : </b><span th:text="${count}"></span><span><i class="fa-solid fa-users" style="color: #005eff; margin-left : 5px;"></i></span></p>
+        <b class="card-text text-primary">Description de l'offre :</b>
+        <br>
+        <p class="card-text" th:text="${offre.description}"></p>
+    </div>
+    <div class="card-footer text-body-secondary">
+        <div sec:authorize="hasAuthority('TALENT')">
+            <div th:if="${abbone.equals('true')}">
+                <a th:if="${candidature.status.equals('PENDING')}" class="btn btn-warning" th:href="@{cancelSubscribe(id=${offre.id})}">En cours</a>
+                <a th:if="${candidature.status.equals('ACCEPTED')}" class="btn btn-success disabled">Accepté</a>
+                <a th:if="${candidature.status.equals('REJECTED')}" class="btn btn-danger disabled">Rejeté</a>
+
+            </div>
+            <div th:if="${abbone.equals('false')}">
+                <a class="btn btn-primary" th:href="@{subscribe(id=${offre.id})}">Envoyer une demande</a>
+            </div>
+        </div>
+        <div sec:authorize="hasAuthority('ADMIN')">
+            <a class="btn btn-danger" th:href="@{/offres/delete(id=${offre.id})}">Supprimer</a>
+        </div>
+        <div th:if="${username.equals(offre.entreprise.nom)}">
+            <a class="btn btn-info text-white" th:href="@{/offres/edit(id=${offre.id})}">Modifier offre</a>
+            <a class="btn btn-danger" th:href="@{/offres/delete(id=${offre.id})}">Supprimer</a>
+        </div>
+    </div>
+</div>
+
+
+<section sec:authorize="hasAuthority('ADMIN')">
+    <div class="container mb-3">
+        <div th:if="${candidatList.isEmpty()}">
+            <p class="h4 alert alert-info ms-3 me-3 text-center" role="alert">Aucune Candidature pour le moment !</p>
+        </div>
+        <div th:if="!${candidatList.isEmpty()}">
+            <div class="card">
+                <div class="card-header text-center bg-primary text-white">
+                    <p class="h3"><span>Liste des candidatures de l'offre </span><span th:text="${offre.titre}"></span></p>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Date</th>
+                            <th>Statut de Candidature</th>
+                            <th>Profil</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="c:${candidatList}">
+                            <td th:text="${c.talent.nom}"></td>
+                            <td th:text="${c.talent.prenom}"></td>
+                            <td th:text="${#dates.format(c.date, 'dd-MM-yyyy')}"></td>
+                            <td>
+                                <b th:if="${c.status.equals('PENDING')}" class="text-warning">En cours</b>
+                                <b th:if="${c.status.equals('ACCEPTED')}" class="text-success">Accepté</b>
+                                <b th:if="${c.status.equals('REJECTED')}" class="text-danger">Rejeté</b>
+                            </td>
+                            <td><a class="btn btn-primary m-1" th:href="@{/profils/talentProfil(id=${c.talent.id})}">Voir le profil</a></td>
+                            <td><a class="btn btn-danger m-1" th:href="@{/offres/deleteCandidature(id=${c.id})}">Supprimer</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section th:if="${username.equals(offre.entreprise.username)}">
+    <div class="container mb-3">
+        <div th:if="${candidatList.isEmpty()}">
+            <p class="h4 alert alert-info ms-3 me-3 text-center" role="alert">Aucune Candidature pour le moment !</p>
+        </div>
+        <div th:if="!${candidatList.isEmpty()}">
+            <div class="card">
+                <div class="card-header text-center bg-primary text-white">
+                    <p class="h3"><span>Liste des candidatures de l'offre </span><span th:text="${offre.titre}"></span></p>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Date</th>
+                            <th>Candidature Statut</th>
+                            <th>Profil</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="c:${candidatList}">
+                            <td th:text="${c.talent.nom}"></td>
+                            <td th:text="${c.talent.prenom}"></td>
+                            <td th:text="${#dates.format(c.date, 'dd-MM-yyyy')}"></td>
+                            <td>
+                                <b th:if="${c.status.equals('ACCEPTED')}" class="text-success">Accepté</b>
+                                <b th:if="${c.status.equals('REJECTED')}" class="text-danger">Rejeté</b>
+                                <div th:if="${#strings.equals(c.status, 'PENDING')}">
+                                    <a class="btn btn-outline-success" th:href="@{/offres/acceptCandidature(id=${c.id})}">Accepter</a>
+                                    <a class="btn btn-outline-danger" th:href="@{/offres/rejectCandidature(id=${c.id})}">Rejeter</a>
+                                </div>
+                            </td>
+                            <td><a class="btn btn-primary m-1" th:href="@{/profils/talentProfil(id=${c.talent.id})}">Voir profil</a></td>
+                            <td><a class="btn btn-danger m-1" th:href="@{/offres/deleteCandidature(id=${c.id})}">Supprimer</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

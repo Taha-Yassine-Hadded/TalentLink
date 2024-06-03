@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+  <meta charset="UTF-8">
+  <title>Modifier Profil</title>
+  <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/textStyle.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/styleOffresFinal.css">
+  <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+  <div class="container">
+    <a class="navbar-brand text-white" href="/">TalentLink</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li sec:authorize="isAuthenticated()" class="nav-item">
+          <a class="nav-link dropdown-toggle" href="#" role="button" style="color: white;" data-bs-toggle="dropdown">
+            <b><span sec:authentication="name"></span></b>
+          </a>
+          <ul class="dropdown-menu" style="margin-left: 1280px;">
+            <li><a class="dropdown-item" th:href="@{/}" ><span><i class="fa-solid fa-house" style="color: #005eff;"></i></span><span>&nbsp;Accueil</span></a></li>
+            <li>
+              <a class="dropdown-item" th:href="@{/profils/myProfilT}" sec:authorize="hasAuthority('TALENT')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a>
+            </li>
+            <li><a class="dropdown-item" th:href="@{/profils/myProfilE}" sec:authorize="hasAuthority('ENTREPRISE')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a></li>
+            <li><a class="dropdown-item" th:href="@{/notifications}" sec:authorize="hasAnyAuthority('ENTREPRISE','TALENT')"><span><i class="fa-regular fa-bell" style="color: #005eff;"></i></span><span>&nbsp;Notifications</span></a></li>
+            <li><a class="dropdown-item" th:href="@{/admins/talentsList}" sec:authorize="hasAuthority('ADMIN')"><span><i class="fa-solid fa-list-check" style="color: #005eff;"></i></span><span>&nbsp;Gérer</span></a></li>
+            <li><a class="dropdown-item" href="/logout"><span><i class="fa-solid fa-right-from-bracket" style="color: #005eff;"></i></span><span>&nbsp;Déconnecter</span></a></li>
+
+
+          </ul>
+        </li>
+        <li sec:authorize="!isAuthenticated()" class="nav-item">
+          <a class="nav-link" href="/login"><b>Connexion</b></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section>
+  <div class="container">
+    <div class="row justify-content-center mt-4 mb-2">
+      <div class="col-md-6">
+        <div class="card border border-primary border border-3 shadow" style="border-radius : 2%;">
+          <div class="card-header text-center" style="background : #0d6efd;">
+            <h3 style="color : white;">Modifier le Profil</h3>
+          </div>
+          <div class="card-body">
+            <form th:action="@{saveEntrepriseUpdates}" method="post" th:object="${entreprise}">
+              <div class="form-group">
+                <input type="text" class="form-control" name="id" th:field="*{id}" hidden="hidden" >
+              </div>
+              <div class="form-group">
+                <label for="nom">Nom d'entreprise :</label>
+                <input type="text" name="nom" id="nom" class="form-control" th:field="*{nom}" required>
+              </div>
+              <small class="text-danger" th:text="${errorNom}" th:if="${errorNom}"></small>
+              <div class="form-group">
+                <label class="form-label">Site web :</label>
+                <input type="text" class="form-control" th:field="*{website}">
+              </div>
+              <div class="form-group">
+                <label for="specialisation">Spécialisation :</label>
+                <input type="text" name="specialisation" id="specialisation" class="form-control" th:field="*{specialisation}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Pays :</label>
+                <input type="text" class="form-control" name="pays" th:field="*{pays}" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nom d'utilisateur :</label>
+                <input type="text" class="form-control" th:field="*{username}" required>
+              </div>
+              <small class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></small>
+              <small class="text-danger" th:text="${errorUsername}" th:if="${errorUsername}"></small>
+              <small class="text-danger" th:text="${errorTal}" th:if="${errorTal}"></small>
+              <div class="form-group">
+                <label class="form-label">Email :</label>
+                <input type="email" class="form-control" th:field="*{email}" required>
+              </div>
+              <small class="text-danger" th:text="${errorEmailTal}" th:if="${errorEmailTal}"></small>
+              <div class="form-check mt-2">
+                <input class="form-check-input" type="checkbox" id="changePasswordCheckbox">
+                <label class="form-check-label" for="changePasswordCheckbox">
+                  Changer le mot de passe
+                </label>
+              </div>
+              <div id="changePasswordForm" style="display:none;">
+              <div class="container">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="col-md-6">
+                      <label class="form-label">Nouvelle mot de passe :</label>
+                      <input type="password" class="form-control" name="newPassword">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Confirmer la nouvelle mot de passe :</label>
+                      <input type="password" class="form-control" name="confirmPassword">
+                    </div>
+                  </div>
+                  </div>
+                </div>
+              </div>
+              <small class="text-danger" th:text="${errorPassword}" th:if="${errorPassword}"></small>
+              <div class="text-center mt-3">
+              <button type="submit" class="btn btn-primary mt-2">Confirmer</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Add an event listener to the checkbox
+  document.getElementById("changePasswordCheckbox").addEventListener("change", function() {
+    // Get the change password form element
+    var changePasswordForm = document.getElementById("changePasswordForm");
+
+    // Show or hide the change password form based on the checkbox value
+    if (this.checked) {
+      changePasswordForm.style.display = "block";
+    } else {
+      changePasswordForm.style.display = "none";
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/line-icons.css">
+    <link rel="stylesheet" href="/css/styleHome.css">
+    <title>TalentLink - Page d'Accueil</title>
+
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+
+</head>
+
+<body data-bs-spy="scroll" data-bs-target=".navbar">
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+    <div class="container">
+        <a class="navbar-brand text-white" href="/">TalentLink</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link btn-main btnr text-white" th:href="@{/offres}" style="padding-top : 3px; padding-bottom : 3px; margin-left : 18px; margin-top : 4px;">Offres</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about"><b>À propos</b></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#services"><b>Services</b></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact"><b>Contact</b></a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" style="color: white;" data-bs-toggle="dropdown">
+                                <b><span sec:authentication="name"></span></b>
+                            </a>
+                            <ul class="dropdown-menu" style="margin-left: 1280px;">
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/profils/myProfilT}" sec:authorize="hasAuthority('TALENT')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a>
+                                </li>
+                                <li><a class="dropdown-item" th:href="@{/profils/myProfilE}" sec:authorize="hasAuthority('ENTREPRISE')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a></li>
+                                <li><a class="dropdown-item" th:href="@{/notifications}" sec:authorize="hasAnyAuthority('ENTREPRISE','TALENT')"><span><i class="fa-regular fa-bell" style="color: #005eff;"></i></span><span>&nbsp;Notifications</span></a></li>
+                                <li><a class="dropdown-item" th:href="@{/admins/talentsList}" sec:authorize="hasAuthority('ADMIN')"><span><i class="fa-solid fa-list-check" style="color: #005eff;"></i></span><span>&nbsp;Gérer</span></a></li>
+                                <li><a class="dropdown-item" href="/logout"><span><i class="fa-solid fa-right-from-bracket" style="color: #005eff;"></i></span><span>&nbsp;Déconnecter</span></a></li>
+
+
+                            </ul>
+                </li>
+                <li sec:authorize="!isAuthenticated()" class="nav-item">
+                    <a class="nav-link btn-main btnr text-white" href="/login" style="padding-top : 3px; padding-bottom : 3px; margin-left : 18px; margin-top : 4px;"><b>Connexion</b></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!--hero-->
+<section id="home" class="bg-cover hero-section" style="background-image: url(/images/picture.jpeg);">
+    <div class="overlay"></div>
+    <div class="container text-white text-center">
+        <div class="row">
+            <div class="col-12" style="margin-top: 250px;">
+                <h1 class="display-4">Bienvenue dans TalentLink</h1>
+                <p class="my-4" sec:authorize="!isAuthenticated()" style="font-size : 24px;">Prenez votre premier pas , inscrivez vous et vivre une expérience professionelle</p>
+                <a sec:authorize="isAuthenticated()" th:href="@{/offres}"  class="btn-main btn fs-5" style="margin-top : 8px; padding-top : 8px; padding-bottom : 8px;"><span><i class="fa-solid fa-eye" style="color: white;"></i></span>&nbsp;&nbsp;<span><b>Accéder aux offres de mission</b></span></a>
+                <a sec:authorize="!isAuthenticated()" th:href="@{/signUp}"  class="btn-main btn fs-5" style="padding-top : 8px; padding-bottom : 8px;"><b>S'inscrire</b></a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!--about-->
+<section id="about" class="bg-cover" style="background: #0d6efd;">
+    <div class="container text-white text-center">
+        <div class="row">
+            <div class="col-12 section-intro text-center">
+                <h1>À propos de nous</h1>
+                <br>
+                <p style="font-size : 22px;">Notre objectif est de faciliter la collaboration entre les entreprises et les talents <br>en offrant une plateforme centralisée pour trouver, engager et travailler avec des professionnels qualifiés.<br>Que vous ayez besoin de talents pour un projet spécifique ou que vous souhaitiez proposer vos compétences<br> en tant que professionnel,<br>TalentLink vous permet de trouver rapidement les bonnes personnes et de collaborer de manière efficace
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--services-->
+<section id="services" class="text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 section-intro text-center" >
+                <h1>Nos Services</h1>
+                <p style="font-size : 20px;">TalentLink simplifie la collaboration entre les entreprises et les talents <br>
+                    en offrant une plateforme conviviale où vous pouvez réaliser vos coopération en seulement quelques clics
+                </p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="service">
+                    <div class="service-img">
+                        <img src="/images/remplirCv.jpg" style="width : 380px; height : 300px;" alt="">
+                    </div>
+                    <h5 class="mt-5 pt-4">Remplir votre profil et CV</h5>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service">
+                    <div class="service-img">
+                        <img src="/images/collabora.jpg" style="width : 380px; height : 300px;" alt="">
+                    </div>
+                    <h5 class="mt-5 pt-4">Partage des compétences</h5>
+                </div>
+            </div>
+            <div class="col-md-4" >
+                <div class="service">
+                    <div class="service-img">
+                        <img src="/images/image_3.jpg" style="width : 380px; height : 300px;" alt="">
+                    </div>
+                    <h5 class="mt-5 pt-4">Facilite la recherche d'emploi</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+<!--contact-->
+<section id="contact" class="bg-cover text-white" style="background-image: url(/images/cover_3.jpg);">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 section-intro text-center">
+                <h1>Contact</h1>
+                <p>Nous vous encourageons à nous contacter pour toutes vos questions, suggestions ou commentaires afin d'améliorer nos services<br>Votre feedback est précieux et nous sommes ouverts à vos contributions pour rendre votre expérience encore meilleure
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <form class="row g-4" th:action="@{/contactUs}" method="post">
+                    <div class="form-group col-md-6">
+                        <input type="text" name="nomPrenom" class="form-control" placeholder="Nom & Prénom" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <input type="email" class="form-control" name="from" placeholder="Email" required>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <input type="text" class="form-control" name="subject" placeholder="Sujet" required>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <textarea name="content" cols="30" rows="4" class="form-control" placeholder="Message" required></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button class="btn-main btn fs-5" style="padding-top : 8px; padding-bottom : 8px;" type="submit"><b>Envoyer</b></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!--footer-->
+<footer class="py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-0">© TalentLink 2023 - Tous droits réservés</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <div>
+                    <a href="#"><i class='bx bxl-facebook-circle'></i></a>
+                    <a href="#"><i class='bx bxl-twitter'></i></a>
+                    <a href="#"><i class='bx bxl-dribbble'></i></a>
+                    <a href="#"><i class='bx bxl-instagram'></i></a>
+                    <a href="#"><i class='bx bxl-github'></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+
+</html>

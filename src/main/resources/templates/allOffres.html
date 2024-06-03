@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Offres Page</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/textStyle.css">
+    <link rel="stylesheet" href="/css/styleOffres.css">
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+<style>
+.custom-border {
+border-left : 3px solid #0d6efd;
+}
+body {
+
+}
+
+
+</style>
+
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+    <div class="container">
+        <a class="navbar-brand text-white" href="/">TalentLink</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" style="color: white;" data-bs-toggle="dropdown">
+                        <b><span sec:authentication="name"></span></b>
+                    </a>
+                    <ul class="dropdown-menu" style="margin-left: 1280px;">
+                        <li><a class="dropdown-item" th:href="@{/}" ><span><i class="fa-solid fa-house" style="color: #005eff;"></i></span><span>&nbsp;Accueil</span></a></li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/profils/myProfilT}" sec:authorize="hasAuthority('TALENT')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/profils/myProfilE}" sec:authorize="hasAuthority('ENTREPRISE')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/notifications}" sec:authorize="hasAnyAuthority('ENTREPRISE','TALENT')"><span><i class="fa-regular fa-bell" style="color: #005eff;"></i></span><span>&nbsp;Notifications</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/admins/talentsList}" sec:authorize="hasAuthority('ADMIN')"><span><i class="fa-solid fa-list-check" style="color: #005eff;"></i></span><span>&nbsp;Gérer</span></a></li>
+                        <li><a class="dropdown-item" href="/logout"><span><i class="fa-solid fa-right-from-bracket" style="color: #005eff;"></i></span><span>&nbsp;Déconnecter</span></a></li>
+
+
+                    </ul>
+                </li>
+                <li sec:authorize="!isAuthenticated()" class="nav-item">
+                    <a class="nav-link" href="/login"><b>Connexion</b></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div sec:authorize="hasAuthority('ENTREPRISE')">
+    <div style="margin-top: 120px;">
+        <div th:if="!${myOffres.isEmpty()}">
+        <p class="h1 text-primary text-center">Les offres de mission de votre entreprise</p>
+        </div>
+        <div th:if="${myOffres.isEmpty()}">
+            <p class="h5 alert alert-warning text-center" style="width : 50%; margin-left : 25%; margin-top : 10px;">Vous n'avez pas encore ajouté une offre de mission !</p>
+        </div>
+        <a class="btn btn-primary mx-auto d-block" style="width: 180px;" th:href="@{offres/add}">Ajouter une offre</a>
+        <div th:if="!${myOffres.isEmpty()}">
+            <div class="d-flex justify-content-around align-content-center flex-wrap" style="margin-top: 20px;">
+                <div th:each="offre, i :${myOffres}">
+                        <button type="button" class="btn btn-light custom-border shadow" style="font-size : 1.1rem; margin-bottom : 20px">
+                            <a  th:href="@{/offres/offreInfo(id=${offre.id})}" style="text-decoration : none; color : black;">
+                                <div style="padding: 20px;">
+                                    <p  class="text-center h3 text-primary" ><span><i class="fa-solid fa-briefcase" style="color: #0d6efd"></i></span>&nbsp;&nbsp;<span th:text="${offre.titre}"></span></p>
+                                    <div th:if="${!offre.competences.isEmpty()}">
+                                        <div style="margin-bottom : 8px;"><b>Compétences requises</b></div>
+                                        <div th:each="comp:${offre.competences}" style="display: inline-block;">
+                                            <span class="text-uppercase" style="font-weight: normal; border-left : 3px solid #0d6efd; background : #ececec; padding-left : 6px; padding-right : 6px; margin-right : 8px;" th:text="${comp.nom}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a class="btn btn-primary mb-2" th:href="@{/offres/offreInfo(id=${offre.id})}">Voir plus</a>
+                            </a>
+                        </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${allOffres.isEmpty()}">
+        <p class="h5 alert alert-danger text-center" style="width : 50%; margin-left : 25%; margin-top : 10px;">Aucune offre de mission pour le moment</p>
+    </div>
+    <div th:if="!${allOffres.isEmpty()}">
+    <p class="h1 text-primary text-center" style="margin-top: 40px;">Toutes les offres de mission</p>
+    <div class="d-flex justify-content-around align-content-center flex-wrap" style="margin-top: 20px;">
+        <div th:each="offre, i :${allOffres}">
+            <button type="button" class="btn btn-light custom-border shadow" style="font-size : 1.1rem; margin-bottom : 20px">
+                <a  th:href="@{/offres/offreInfo(id=${offre.id})}" style="text-decoration : none; color : black;">
+                    <div style="padding: 20px;">
+                        <p  class="text-center h3 text-primary" ><span><i class="fa-solid fa-briefcase" style="color: #0d6efd"></i></span>&nbsp;&nbsp;<span th:text="${offre.titre}"></span></p>
+                        <div th:if="${!offre.competences.isEmpty()}">
+                            <div style="margin-bottom : 8px;"><b>Compétences requises</b></div>
+                            <div th:each="comp:${offre.competences}" style="display: inline-block;">
+                                <span class="text-uppercase" style="font-weight: normal; border-left : 3px solid #0d6efd; background : #ececec; padding-left : 6px; padding-right : 6px; margin-right : 8px;" th:text="${comp.nom}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="btn btn-primary mb-2" th:href="@{/offres/offreInfo(id=${offre.id})}">Voir plus</a>
+                </a>
+            </button>
+        </div>
+    </div>
+    </div>
+</div>
+<div sec:authorize="hasAuthority('TALENT')">
+    <div style="margin-top: 120px;">
+        <div th:if="!${candidatList.isEmpty()}">
+            <p class="h1 text-primary text-center">Les offres dont vous avez envoyé une demande</p>
+            <div class="d-flex justify-content-around align-content-center flex-wrap" style="margin-top: 20px;">
+                <div th:each="cand, i :${candidatList}">
+                    <button type="button" class="btn btn-light custom-border shadow" style="font-size : 1.1rem; margin-bottom : 20px">
+                        <a  th:href="@{/offres/offreInfo(id=${cand.offreDeMission.id})}" style="text-decoration : none; color : black;">
+                            <div style="padding: 20px;">
+                                <p  class="text-center h3 text-primary" ><span><i class="fa-solid fa-briefcase" style="color: #0d6efd"></i></span>&nbsp;&nbsp;<span th:text="${cand.offreDeMission.titre}"></span></p>
+                                <div th:if="${!cand.offreDeMission.competences.isEmpty()}">
+                                    <div style="margin-bottom : 8px;"><b>Compétences requises</b></div>
+                                    <div th:each="comp:${cand.offreDeMission.competences}" style="display: inline-block;">
+                                        <span class="text-uppercase" style="font-weight: normal; border-left : 3px solid #0d6efd; background : #ececec; padding-left : 6px; padding-right : 6px; margin-right : 8px;" th:text="${comp.nom}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <a class="btn btn-primary mb-2" th:href="@{/offres/offreInfo(id=${cand.offreDeMission.id})}">Voir plus</a>
+                        </a>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${allOffres.isEmpty()}">
+        <p class="h5 alert alert-danger text-center" style="width : 50%; margin-left : 25%; margin-top : 10px;">Aucune offre de mission pour le moment</p>
+    </div>
+    <div th:if="!${allOffres.isEmpty()}">
+        <p class="h1 text-primary text-center" style="margin-top: 40px;">Toutes les offres de mission</p>
+        <div class="d-flex justify-content-around align-content-center flex-wrap" style="margin-top: 20px;">
+            <div th:each="offre, i :${allOffres}">
+                <button type="button" class="btn btn-light custom-border shadow" style="font-size : 1.1rem; margin-bottom : 20px">
+                    <a  th:href="@{/offres/offreInfo(id=${offre.id})}" style="text-decoration : none; color : black;">
+                        <div style="padding: 20px;">
+                            <p  class="text-center h3 text-primary" ><span><i class="fa-solid fa-briefcase" style="color: #0d6efd"></i></span>&nbsp;&nbsp;<span th:text="${offre.titre}"></span></p>
+                            <div th:if="${!offre.competences.isEmpty()}">
+                                <div style="margin-bottom : 8px;"><b>Compétences requises</b></div>
+                                <div th:each="comp:${offre.competences}" style="display: inline-block;">
+                                    <span class="text-uppercase" style="font-weight: normal; border-left : 3px solid #0d6efd; background : #ececec; padding-left : 6px; padding-right : 6px; margin-right : 8px;" th:text="${comp.nom}"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="btn btn-primary mb-2" th:href="@{/offres/offreInfo(id=${offre.id})}">Voir plus</a>
+                    </a>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div sec:authorize="hasAuthority('ADMIN')">
+    <div th:if="${allOffres.isEmpty()}">
+        <p class="h5 alert alert-danger text-center" style="width : 50%; margin-left : 25%; margin-top : 120px;">Aucune offre de mission pour le moment</p>
+    </div>
+    <div th:if="!${allOffres.isEmpty()}">
+        <p class="h1 text-primary text-center" style="margin-top: 110px;">Toutes les offres de mission</p>
+        <div class="d-flex justify-content-around align-content-center flex-wrap" style="margin-top: 20px;">
+            <div th:each="offre, i :${allOffres}">
+                <button type="button" class="btn btn-light custom-border shadow" style="font-size : 1.1rem; margin-bottom : 20px">
+                    <a  th:href="@{/offres/offreInfo(id=${offre.id})}" style="text-decoration : none; color : black;">
+                        <div style="padding: 20px;">
+                            <p  class="text-center h3 text-primary" ><span><i class="fa-solid fa-briefcase" style="color: #0d6efd"></i></span>&nbsp;&nbsp;<span th:text="${offre.titre}"></span></p>
+                            <div th:if="${!offre.competences.isEmpty()}">
+                                <div style="margin-bottom : 8px;"><b>Compétences requises</b></div>
+                                    <div th:each="comp:${offre.competences}" style="display: inline-block;">
+                                        <span class="text-uppercase" style="font-weight: normal; border-left : 3px solid #0d6efd; background : #ececec; padding-left : 6px; padding-right : 6px; margin-right : 8px;" th:text="${comp.nom}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <a class="btn btn-primary mb-2" th:href="@{/offres/offreInfo(id=${offre.id})}">Voir plus</a>
+                        </a>
+                    </button>
+                </div>
+            </div>
+    </div>
+</div>
+</body>
+</html>

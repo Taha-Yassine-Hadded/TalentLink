@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+>
+<head>
+  <title>Error 403</title>
+  <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="/css/line-icons.css">
+  <link rel="stylesheet" href="/css/styleOffresFinal.css">
+  <link rel="stylesheet" href="/css/error403.css">
+  <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+  <style>
+    body section {
+          margin-top : 6%;
+
+    }
+    </style>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+  <div class="container">
+    <a class="navbar-brand text-white" href="/">TalentLink</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li sec:authorize="isAuthenticated()" class="nav-item">
+          <a class="nav-link dropdown-toggle" href="#" role="button" style="color: white;" data-bs-toggle="dropdown">
+            <b><span sec:authentication="name"></span></b>
+          </a>
+          <ul class="dropdown-menu" style="margin-left: 1280px;">
+            <li><a class="dropdown-item" th:href="@{/}" ><span><i class="fa-solid fa-house" style="color: #005eff;"></i></span><span>&nbsp;Accueil</span></a></li>
+            <li>
+              <a class="dropdown-item" th:href="@{/profils/myProfilT}" sec:authorize="hasAuthority('TALENT')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a>
+            </li>
+            <li><a class="dropdown-item" th:href="@{/profils/myProfilE}" sec:authorize="hasAuthority('ENTREPRISE')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a></li>
+            <li><a class="dropdown-item" th:href="@{/notifications}" sec:authorize="hasAnyAuthority('ENTREPRISE','TALENT')"><span><i class="fa-regular fa-bell" style="color: #005eff;"></i></span><span>&nbsp;Notifications</span></a></li>
+            <li><a class="dropdown-item" th:href="@{/admins/talentsList}" sec:authorize="hasAuthority('ADMIN')"><span><i class="fa-solid fa-list-check" style="color: #005eff;"></i></span><span>&nbsp;Gérer</span></a></li>
+            <li><a class="dropdown-item" href="/logout"><span><i class="fa-solid fa-right-from-bracket" style="color: #005eff;"></i></span><span>&nbsp;Déconnecter</span></a></li>
+
+
+          </ul>
+        </li>
+        <li sec:authorize="!isAuthenticated()" class="nav-item">
+          <a class="nav-link" href="/login"><b>Connexion</b></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<section style="margin-top : 300px;">
+  <div class="w3-display-middle">
+    <h1 class="w3-jumbo w3-animate-top w3-center"><code>ACCÈS REFUSÉ</code></h1>
+    <hr class="w3-border-white w3-animate-left" style="margin:auto;width:50%">
+    <h3 class="w3-center w3-animate-right">Vous n'avez pas la permission d'acceder a cette page</h3>
+    <h3 class="w3-center w3-animate-zoom">🚫🚫🚫🚫</h3>
+    <h6 class="w3-center w3-animate-zoom" style="color : black;">erreur 403</h6>
+  </div>
+</section>
+</body>
+</html>

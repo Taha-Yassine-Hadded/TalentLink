@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter Offre de mission</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/textStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styleOffresFinal.css">
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+    <div class="container">
+        <a class="navbar-brand text-white" href="/">TalentLink</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" style="color: white;" data-bs-toggle="dropdown">
+                        <b><span sec:authentication="name"></span></b>
+                    </a>
+                    <ul class="dropdown-menu" style="margin-left: 1280px;">
+                        <li><a class="dropdown-item" th:href="@{/}" ><span><i class="fa-solid fa-house" style="color: #005eff;"></i></span><span>&nbsp;Accueil</span></a></li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/profils/myProfilT}" sec:authorize="hasAuthority('TALENT')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/profils/myProfilE}" sec:authorize="hasAuthority('ENTREPRISE')"><span><i class="fa-regular fa-user" style="color: #005eff;"></i></span><span>&nbsp;Profil</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/notifications}" sec:authorize="hasAnyAuthority('ENTREPRISE','TALENT')"><span><i class="fa-regular fa-bell" style="color: #005eff;"></i></span><span>&nbsp;Notifications</span></a></li>
+                        <li><a class="dropdown-item" th:href="@{/admins/talentsList}" sec:authorize="hasAuthority('ADMIN')"><span><i class="fa-solid fa-list-check" style="color: #005eff;"></i></span><span>&nbsp;Gérer</span></a></li>
+                        <li><a class="dropdown-item" href="/logout"><span><i class="fa-solid fa-right-from-bracket" style="color: #005eff;"></i></span><span>&nbsp;Déconnecter</span></a></li>
+
+
+                    </ul>
+                </li>
+                <li sec:authorize="!isAuthenticated()" class="nav-item">
+                    <a class="nav-link" href="/login"><b>Connexion</b></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<section class="container">
+    <div class="row justify-content-center mt-4 mb-3">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <form th:action="@{save}" method="post" th:object="${offre}">
+                    <div class="card-header text-center" style="background: #0d6efd;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h4 style="color: white; margin-left: 128px;">Ajouter une offre de mission</h4>
+                            <button type="submit" onclick="resetForm()" class="btn btn-primary" style="background : white; color : #0d6efd;">Ajouter</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${error}">
+                            <p class="alert alert-info ms-3 me-3" role="alert" th:text="${error}"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="titre">Titre :</label>
+                            <input type="text" name="titre" id="titre" class="form-control" th:field="*{titre}" required>
+                        </div>
+                        <div class="form-group mt-2 mb-0">
+                            <label for="description">Description :</label>
+                            <textarea class="form-control" rows="3" name="description" id="description"
+                                      th:field="*{description}"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div class="card-body">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Ajouter une compétence
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div>
+                                            <form id="competenceForm" onsubmit="addCompetence()" th:action="@{saveCompetence}" method="post" th:object="${competence}">
+                                                <div class="row justify-content-between">
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label for="nom">Nom :</label>
+                                                            <input type="text" name="nom" id="nom" class="form-control" th:field="*{nom}" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label>Niveau :</label>
+                                                            <select class="form-control" th:field="*{niveau}">
+                                                                <option value="Debutant">Débutant</option>
+                                                                <option value="Intermediaire">Intermédiaire</option>
+                                                                <option value="Expert">Expert</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4 d-flex align-items-end">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-primary" onclick="addCompetence()">+</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                    <div th:if="${!competenceList.isEmpty()}">
+                        <div class="container mt-2 mb-2">
+                            <div class="card">
+                                <div class="card-header text-primary bg-light">
+                                    <tr>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <div class="flex-item "><b>Liste des compétences</b></div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Niveau</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="com, i :${competenceList}">
+                                            <td th:text="${com.nom}"></td>
+                                            <td th:text="${com.niveau}"></td>
+                                            <td>
+                                                <a th:href="@{deleteCompetence(i=${i.index})}" class="btn btn-outline-danger" style="background : white;"><i class="fa-solid fa-trash" style="color: #fa0000;"></i></a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    // Retrieve the values from local storage and set them in the form fields
+    var titreValue = localStorage.getItem('titreValue');
+    var descriptionValue = localStorage.getItem('descriptionValue');
+    document.getElementById('titre').value = titreValue;
+    document.getElementById('description').value = descriptionValue;
+
+    function addCompetence() {
+        // Store the values of titre and description in local storage
+        var titreValue = document.getElementById('titre').value;
+        var descriptionValue = document.getElementById('description').value;
+        localStorage.setItem('titreValue', titreValue);
+        localStorage.setItem('descriptionValue', descriptionValue);
+    }
+
+    function resetForm() {
+        localStorage.removeItem('titreValue');
+        localStorage.removeItem('descriptionValue');
+    }
+
+</script>
+
+</body>
+</html>
